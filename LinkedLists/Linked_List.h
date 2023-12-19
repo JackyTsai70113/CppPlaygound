@@ -10,6 +10,7 @@ template <typename T>
 struct Node
 {
     T Data;
+    Node *Prev;
     Node *Next;
 };
 
@@ -17,9 +18,36 @@ template <typename T>
 class Linked_List
 {
 private:
-    Node<T> *First;
+    Node<T> *Head;
+    Node<T> *Tail;
 
 public:
+    class Iterator
+    {
+        friend Linked_List;
+
+    private:
+        Node<T> *iter;
+
+    public:
+        Iterator(Node<T> * = nullptr);
+        // ++Iterator
+        void operator++();
+        // --Iterator
+        void operator--();
+        // Iterator++
+        void operator++(int);
+        // Iterator--
+        void operator--(int);
+        bool operator==(Iterator);
+        bool operator!=(Iterator);
+        void operator=(Iterator);
+        int operator-(Iterator);
+        Iterator operator+(int);
+        Iterator operator-(int);
+        T &operator*();
+    };
+    // 建構式
     Linked_List();
     // 印出所有 Linked List 內的資料
     void Print_List();
@@ -40,23 +68,159 @@ public:
     void Clear();
     // 反轉鏈結串列
     void Reverse();
+    // 插入資料
+    void Insert(Iterator, const T &);
+    // 刪除特定迭代器的資料
+    void Erase(Iterator);
+    // 刪除特定的資料
+    void Remove(const T &);
+    template <typename T2>
+    friend typename Linked_List<T2>::Iterator Find(Linked_List<T2>, T2);
 };
+
+/// @brief 搜尋 LinkedList 中的資料
+/// @param  特定資料
+/// @return 回傳搜尋到的第一個特定資料迭代器
+template <typename T>
+typename Linked_List<T>::Iterator Find(Linked_List<T> list, const T val)
+{
+    for (auto iter = list.Head; iter != nullptr; iter++)
+    {
+        if (iter->Data == val)
+            return iter;
+    }
+    return typename Linked_List<T>::Iterator(nullptr);
+}
+
+// /// @brief 在特定位置新增資料
+// /// @param  特定資料
+// /// @return 回傳搜尋到的第一個特定資料迭代器
+// template <typename T>
+// typename Linked_List<T>::Iterator Find(Linked_List<T> &v, Iterator val)
+// {
+
+//     for (auto iter = ; iter != v.End(); ++iter)
+//     {
+//         if (*iter == val)
+//             return iter;
+//     }
+//     return v.End();
+// }
+
+// /// @brief 在特定位置刪除資料
+// /// @param  特定資料
+// /// @return 回傳搜尋到的第一個特定資料迭代器
+// template <typename T>
+// typename Linked_List<T>::Iterator Find(Linked_List<T> &v, Linked_List<T>::Iterator val)
+// {
+//     for (auto iter = v.Begin(); iter != v.End(); ++iter)
+//     {
+//         if (*iter == val)
+//             return iter;
+//     }
+//     return v.End();
+// }
+
+template <typename T>
+Linked_List<T>::Iterator::Iterator(Node<T> *pointer)
+{
+    iter = pointer;
+}
+
+template <typename T>
+void Linked_List<T>::Iterator::operator++()
+{
+    if (iter != nullptr)
+        iter = iter->Next;
+}
+
+template <typename T>
+void Linked_List<T>::Iterator::operator--()
+{
+    if (iter != nullptr)
+        iter = iter->Prev;
+}
+
+template <typename T>
+void Linked_List<T>::Iterator::operator++(int)
+{
+    if (iter != nullptr)
+        iter = iter->Next;
+}
+
+template <typename T>
+void Linked_List<T>::Iterator::operator--(int)
+{
+    if (iter != nullptr)
+        iter = iter->Prev;
+}
+
+template <typename T>
+bool Linked_List<T>::Iterator::operator==(Linked_List<T>::Iterator iter2)
+{
+    return iter == iter2.iter;
+}
+
+template <typename T>
+bool Linked_List<T>::Iterator::operator!=(Linked_List<T>::Iterator iter2)
+{
+    return iter != iter2.iter;
+}
+
+template <typename T>
+void Linked_List<T>::Iterator::operator=(Linked_List<T>::Iterator iter2)
+{
+    iter = iter2.iter;
+}
+
+template <typename T>
+typename Linked_List<T>::Iterator Linked_List<T>::Iterator::operator+(int offset)
+{
+    Iterator result(iter);
+    for (int i = 0; i < offset; ++i)
+    {
+        if (result.iter == nullptr)
+            return result;
+        result.iter = result.iter.Next;
+    }
+    return result;
+}
+
+template <typename T>
+typename Linked_List<T>::Iterator Linked_List<T>::Iterator::operator-(int offset)
+{
+    Iterator result(iter);
+    for (int i = 0; i < offset; ++i)
+    {
+        if (result.iter == nullptr)
+            return result;
+        result.iter = result.iter.Prev;
+    }
+    return result;
+}
+
+template <typename T>
+T &Linked_List<T>::Iterator::operator*()
+{
+    return iter->Data;
+}
 
 template <typename T>
 Linked_List<T>::Linked_List()
 {
-    First = nullptr;
+    Head = nullptr;
+    Tail = nullptr;
 }
 
 template <typename T>
 void Linked_List<T>::Print_List()
 {
-    if (First == nullptr)
+    if (Head == nullptr)
     {
         cout << "This list is empty!" << endl;
         return;
     }
-    Node<T> *cur = First;
+    Node<T> *cur = Head;
     cout << "Data: [";
     while (cur->Next != nullptr)
     {
@@ -70,7 +234,7 @@ template <typename T>
 int Linked_List<T>::Search_List(T target)
 {
     int res = -1;
-    Node<T> *cur = First;
+    Node<T> *cur = Head;
     while (cur != nullptr)
     {
         res++;
@@ -86,97 +250,156 @@ int Linked_List<T>::Search_List(T target)
 template <typename T>
 void Linked_List<T>::Push_Front(T value)
 {
-    Node<T> *newNode = new Node<T>{value, First};
-    First = newNode;
+    if (Head == nullptr)
+    {
+        auto newNode = new Node<T>{value, nullptr, nullptr};
+        Head = newNode;
+        Tail = newNode;
+    }
+    else
+    {
+        Head->Prev = new Node<T>{value, nullptr, Head};
+        Head = Head->Prev;
+    }
 }
 
 template <typename T>
 void Linked_List<T>::Push_Back(T value)
 {
-    if (First == nullptr)
+    if (Head == nullptr)
     {
-        Node<T> *newNode = new Node<T>{value, First};
-        First = newNode;
+        auto newNode = new Node<T>{value, nullptr, nullptr};
+        Head = newNode;
+        Tail = newNode;
     }
     else
     {
-        Node<T> *cur = First;
-        while (cur->Next != nullptr)
-        {
-            cur = cur->Next;
-        }
-        cur->Next = new Node<T>{value, nullptr};
+        Tail->Next = new Node<T>{value, Tail, nullptr};
+        Tail = Tail->Next;
     }
 }
 
 template <typename T>
 void Linked_List<T>::Pop_Front()
 {
-    if (First == nullptr)
+    if (Head == nullptr)
         return;
-    Node<T> *temp = First;
-    First = First->Next;
-    delete temp;
+    if (Head == Tail) // only 1 node
+    {
+        delete Head;
+        Head = Tail = nullptr;
+        return;
+    }
+    Head = Head->Next;
+    delete Head->Prev;
+    Head->Prev = nullptr;
 }
 
 template <typename T>
 void Linked_List<T>::Pop_Back()
 {
-    if (First == nullptr)
+    if (Head == nullptr)
         return;
-    if (First->Next == nullptr)
+
+    if (Head == Tail) // only 1 node
     {
-        delete First;
-        First = nullptr;
+        delete Head;
+        Head = Tail = nullptr;
         return;
     }
-    Node<T> *cur = First;
-    while (cur->Next->Next != nullptr)
-    {
-        cur = cur->Next;
-    }
-    delete cur->Next;
-    cur->Next = nullptr;
+    Tail = Tail->Prev;
+    delete Tail->Next;
+    Tail->Next = nullptr;
 }
 
 template <typename T>
 void Linked_List<T>::Clear()
 {
-    while (First != nullptr)
+    while (Head != nullptr)
     {
-        auto temp = First;
-        First = First->Next;
+        auto temp = Head;
+        Head = Head->Next;
         delete temp;
     }
+    Tail = nullptr;
 }
 
 template <typename T>
 void Linked_List<T>::Reverse()
 {
-    if (First == nullptr || First->Next == nullptr)
+    if (Head == nullptr || Head == Tail)
         return;
-    Node<T> *cur = new Node<T>{0, First};
-    Node<T> *tail = First;
-    while (tail->Next != nullptr)
+    Node<T> *previous = nullptr;
+    Node<T> *cur = Head;
+    Node<T> *preceding = Head->Next;
+    while (preceding != nullptr)
     {
-        auto temp = cur->Next;
-        cur->Next = tail->Next;
-        tail->Next = tail->Next->Next;
-        cur->Next->Next = temp;
+        cur->Next = previous;
+        previous = cur;
+        cur = preceding;
+        preceding = preceding->Next;
     }
-    First = cur->Next;
-    // Node<T> *previous = nullptr;
-    // Node<T> *cur = First;
-    // Node<T> *preceding = cur->Next;
-    // while (preceding != nullptr)
+    cur->Prev = previous;
+    cur->Next = preceding;
+    Head = cur;
+}
+
+template <typename T>
+void Linked_List<T>::Insert(Iterator it, const T &val)
+{
+    // if (it == Head)
     // {
-    //     cur->Next = previous;
-    //     previous = cur;
-    //     cur = preceding;
-    //     preceding = preceding->Next;
+    //     Push_Front(val);
+    //     return;
     // }
-    // cur->Next = previous;
-    // First = cur;
+    // if (it == Tail)
+    // {
+    //     Push_Back(val);
+    //     return;
+    // }
+    // A B, B is provided by user = it
+    // A C B
+    auto newNode = Iterator{val, it.iter->Prev, it.iter};
+    it.iter->Prev->Next = newNode; // A - B
+    it.iter->Prev = newNode;       // C - B
+}
+
+template <typename T>
+void Linked_List<T>::Erase(Iterator it)
+{
+    // if (it == Head)
+    // {
+    //     Pop_Front(val);
+    //     return;
+    // }
+    // if (it == Tail)
+    // {
+    //     Pop_Back(val);
+    //     return;
+    // }
+    // A B C, B is provided by user = it
+    // A C
+    it.iter->Prev->Next = it.iter->Next; // A - B
+    it.iter->Next->Prev = it.iter->Prev; // C - B
+    delete it.iter;
+}
+
+template <typename T>
+void Linked_List<T>::Remove(const T &val)
+{
+    auto iter = Head;
+    while (iter != nullptr)
+    {
+        if (*iter == val)
+        {
+            auto temp = iter->Next;
+            Erase(iter);
+        }
+        else
+        {
+            iter++;
+        }
+    }
 }
 
 #endif // VECTOR_H_INCLUDED

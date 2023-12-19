@@ -82,11 +82,11 @@ public:
 
 /// @brief 搜尋 Vector 中的資料
 /// @param  特定資料
-/// @return 回傳搜尋到的特定資料迭代器
+/// @return 回傳搜尋到的第一個特定資料迭代器
 template <typename T>
 typename Vector<T>::Iterator Find(Vector<T> &v, T val)
 {
-    for (auto iter = v.Begin(); iter != v.End(); ++iter)
+    for (typename Vector<T>::Iterator iter = v.Begin(); iter != v.End(); ++iter)
     {
         if (*iter == val)
             return iter;
@@ -101,14 +101,14 @@ template <typename T>
 typename Vector<T>::Iterator Remove(Vector<T> &v, T val)
 {
     int counts = 0;
-    for (auto iter = v.Begin(); iter != v.End(); ++iter)
+    for (typename Vector<T>::Iterator iter = v.Begin(); iter != v.End(); ++iter)
     {
         if (*iter == val)
             continue;
         *(v.Begin() + counts) = *iter;
         counts++;
     }
-    for (auto iter = (v.Begin() + counts); iter != v.End(); iter++)
+    for (typename Vector<T>::Iterator iter = (v.Begin() + counts); iter != v.End(); iter++)
     {
         *iter = val;
     }
