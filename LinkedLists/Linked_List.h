@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include "Function.h"
 
 using namespace std;
 
@@ -51,6 +52,14 @@ public:
     Linked_List();
     // 印出所有 Linked List 內的資料
     void Print_List();
+    // 第一個元素的迭代器
+    Iterator Begin();
+    // 最後一個元素的下一個的迭代器，即空指標
+    Iterator End();
+    // 迭代器 it 前面的迭代器
+    Iterator Prev(Iterator);
+    // 迭代器 it 後面的迭代器
+    Iterator Next(Iterator);
     // 在 Linked List 內找尋特定資料，並回傳是第幾筆
     int Search_List(T);
     // 新增插入
@@ -91,35 +100,6 @@ typename Linked_List<T>::Iterator Find(Linked_List<T> list, const T val)
     }
     return typename Linked_List<T>::Iterator(nullptr);
 }
-
-// /// @brief 在特定位置新增資料
-// /// @param  特定資料
-// /// @return 回傳搜尋到的第一個特定資料迭代器
-// template <typename T>
-// typename Linked_List<T>::Iterator Find(Linked_List<T> &v, Iterator val)
-// {
-
-//     for (auto iter = ; iter != v.End(); ++iter)
-//     {
-//         if (*iter == val)
-//             return iter;
-//     }
-//     return v.End();
-// }
-
-// /// @brief 在特定位置刪除資料
-// /// @param  特定資料
-// /// @return 回傳搜尋到的第一個特定資料迭代器
-// template <typename T>
-// typename Linked_List<T>::Iterator Find(Linked_List<T> &v, Linked_List<T>::Iterator val)
-// {
-//     for (auto iter = v.Begin(); iter != v.End(); ++iter)
-//     {
-//         if (*iter == val)
-//             return iter;
-//     }
-//     return v.End();
-// }
 
 template <typename T>
 Linked_List<T>::Iterator::Iterator(Node<T> *pointer)
@@ -228,6 +208,30 @@ void Linked_List<T>::Print_List()
         cur = cur->Next;
     }
     cout << cur->Data << "]" << endl;
+}
+
+template <typename T>
+typename Linked_List<T>::Iterator Linked_List<T>::Begin()
+{
+    return Iterator(Head);
+}
+
+template <typename T>
+typename Linked_List<T>::Iterator Linked_List<T>::End()
+{
+    return Iterator(nullptr);
+}
+
+template <typename T>
+typename Linked_List<T>::Iterator Linked_List<T>::Prev(Iterator)
+{
+    return Iterator();
+}
+
+template <typename T>
+typename Linked_List<T>::Iterator Linked_List<T>::Next(Iterator)
+{
+    return Iterator();
 }
 
 template <typename T>
@@ -344,6 +348,9 @@ void Linked_List<T>::Reverse()
     Head = cur;
 }
 
+/// @brief 在特定位置新增資料
+/// @param  特定資料
+/// @return 回傳搜尋到的第一個特定資料迭代器
 template <typename T>
 void Linked_List<T>::Insert(Iterator it, const T &val)
 {
@@ -359,11 +366,14 @@ void Linked_List<T>::Insert(Iterator it, const T &val)
     // }
     // A B, B is provided by user = it
     // A C B
-    auto newNode = Iterator{val, it.iter->Prev, it.iter};
+    Node<T> *newNode = new Node<T>{val, it.iter->Prev, it.iter};
     it.iter->Prev->Next = newNode; // A - B
     it.iter->Prev = newNode;       // C - B
 }
 
+/// @brief 在特定位置刪除資料
+/// @param  特定資料
+/// @return 回傳搜尋到的第一個特定資料迭代器
 template <typename T>
 void Linked_List<T>::Erase(Iterator it)
 {
