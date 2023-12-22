@@ -3,19 +3,31 @@
 
 // 迭代器 it 向後移 n 步
 template <typename T>
-void Advance(T iter, const int &distance)
+void Advance(T& iter, const int &distance)
 {
-    for (int i = 0; i < distance; ++i){
-        iter++;
+    if (distance > 0)
+    {
+        for (int i = 0; i < distance; ++i)
+        {
+            iter++;
+        }
+    }
+    else
+    {
+        for (int i = 0; i > distance; --i)
+        {
+            iter--;
+        }
     }
 }
 
 // 計算兩迭代器之間的距離
 template <typename T>
-void Distance(T iter1, T iter2)
+int Distance(T iter1, T iter2)
 {
     int res = 0;
-    while(iter1 != iter2){
+    while (iter1 != iter2)
+    {
         res++;
         iter1++;
     }
@@ -23,13 +35,13 @@ void Distance(T iter1, T iter2)
 }
 
 template <typename T1, typename T2>
-T1 Begin(T2 container)
+auto Begin(T2 container) -> decltype(container.Begin())
 {
     return container.Begin();
 }
 
 template <typename T1, typename T2>
-T1 End(T2 container)
+auto End(T2 container) -> decltype(container.End())
 {
     return container.End();
 }
@@ -48,4 +60,4 @@ T Next(T iter)
     return iter;
 }
 
-#endif
+#endif // FUNCTION_H_INCLUDED

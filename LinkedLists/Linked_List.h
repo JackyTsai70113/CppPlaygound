@@ -1,9 +1,8 @@
-#ifndef VECTOR_H_INCLUDED
-#define VECTOR_H_INCLUDED
+#ifndef LINKED_LIST_H_INCLUDED
+#define LINKED_LIST_H_INCLUDED
 
-#include <iostream>
-#include <stdlib.h>
 #include "Function.h"
+#include <iostream>
 
 using namespace std;
 
@@ -50,55 +49,42 @@ public:
     };
     // 建構式
     Linked_List();
-    // 印出所有 Linked List 內的資料
+    // 印出所有資料
     void Print_List();
-    // 第一個元素的迭代器
-    Iterator Begin();
-    // 最後一個元素的下一個的迭代器，即空指標
-    Iterator End();
-    // 迭代器 it 前面的迭代器
-    Iterator Prev(Iterator);
-    // 迭代器 it 後面的迭代器
-    Iterator Next(Iterator);
     // 在 Linked List 內找尋特定資料，並回傳是第幾筆
     int Search_List(T);
-    // 新增插入
-    // 在特定位置新增資料
     // 新增首項元素
     void Push_Front(T);
-    // 新增尾端元素
-    void Push_Back(T);
-    // 在特定位置刪除資料
     // 刪除首項元素
     void Pop_Front();
+    // 新增尾端元素
+    void Push_Back(T);
     // 刪除尾端元素
     void Pop_Back();
     // 清空所有資料
     void Clear();
     // 反轉鏈結串列
     void Reverse();
-    // 插入資料
+    // 在特定位置插入資料
     void Insert(Iterator, const T &);
     // 刪除特定迭代器的資料
     void Erase(Iterator);
     // 刪除特定的資料
-    void Remove(const T &);
-    template <typename T2>
-    friend typename Linked_List<T2>::Iterator Find(Linked_List<T2>, T2);
+    void Remove(T);
+    Iterator Begin();
+    Iterator End();
 };
 
-/// @brief 搜尋 LinkedList 中的資料
-/// @param  特定資料
-/// @return 回傳搜尋到的第一個特定資料迭代器
 template <typename T>
-typename Linked_List<T>::Iterator Find(Linked_List<T> list, const T val)
+typename Linked_List<T>::Iterator Linked_List<T>::Begin()
 {
-    for (auto iter = list.Head; iter != nullptr; iter++)
-    {
-        if (iter->Data == val)
-            return iter;
-    }
-    return typename Linked_List<T>::Iterator(nullptr);
+    return Iterator(Head);
+}
+
+template <typename T>
+typename Linked_List<T>::Iterator Linked_List<T>::End()
+{
+    return Iterator(nullptr);
 }
 
 template <typename T>
@@ -154,14 +140,20 @@ void Linked_List<T>::Iterator::operator=(Linked_List<T>::Iterator iter2)
 }
 
 template <typename T>
+T &Linked_List<T>::Iterator::operator*()
+{
+    return iter->Data;
+}
+
+template <typename T>
 typename Linked_List<T>::Iterator Linked_List<T>::Iterator::operator+(int offset)
 {
     Iterator result(iter);
     for (int i = 0; i < offset; ++i)
     {
-        if (result.iter == nullptr)
+        if (result->iter == nullptr)
             return result;
-        result.iter = result.iter.Next;
+        result->iter = result->iter->Next;
     }
     return result;
 }
@@ -174,15 +166,9 @@ typename Linked_List<T>::Iterator Linked_List<T>::Iterator::operator-(int offset
     {
         if (result.iter == nullptr)
             return result;
-        result.iter = result.iter.Prev;
+        result.iter = result.iter->Prev;
     }
     return result;
-}
-
-template <typename T>
-T &Linked_List<T>::Iterator::operator*()
-{
-    return iter->Data;
 }
 
 template <typename T>
@@ -208,30 +194,6 @@ void Linked_List<T>::Print_List()
         cur = cur->Next;
     }
     cout << cur->Data << "]" << endl;
-}
-
-template <typename T>
-typename Linked_List<T>::Iterator Linked_List<T>::Begin()
-{
-    return Iterator(Head);
-}
-
-template <typename T>
-typename Linked_List<T>::Iterator Linked_List<T>::End()
-{
-    return Iterator(nullptr);
-}
-
-template <typename T>
-typename Linked_List<T>::Iterator Linked_List<T>::Prev(Iterator)
-{
-    return Iterator();
-}
-
-template <typename T>
-typename Linked_List<T>::Iterator Linked_List<T>::Next(Iterator)
-{
-    return Iterator();
 }
 
 template <typename T>
@@ -354,18 +316,18 @@ void Linked_List<T>::Reverse()
 template <typename T>
 void Linked_List<T>::Insert(Iterator it, const T &val)
 {
-    // if (it == Head)
-    // {
-    //     Push_Front(val);
-    //     return;
-    // }
-    // if (it == Tail)
-    // {
-    //     Push_Back(val);
-    //     return;
-    // }
     // A B, B is provided by user = it
     // A C B
+    if (it == Begin())
+    {
+        Push_Front(val);
+        return;
+    }
+    if (it == End() || it == Iterator(Tail))
+    {
+        Push_Back(val);
+        return;
+    }
     Node<T> *newNode = new Node<T>{val, it.iter->Prev, it.iter};
     it.iter->Prev->Next = newNode; // A - B
     it.iter->Prev = newNode;       // C - B
@@ -377,39 +339,59 @@ void Linked_List<T>::Insert(Iterator it, const T &val)
 template <typename T>
 void Linked_List<T>::Erase(Iterator it)
 {
-    // if (it == Head)
-    // {
-    //     Pop_Front(val);
-    //     return;
-    // }
-    // if (it == Tail)
-    // {
-    //     Pop_Back(val);
-    //     return;
-    // }
     // A B C, B is provided by user = it
     // A C
-    it.iter->Prev->Next = it.iter->Next; // A - B
-    it.iter->Next->Prev = it.iter->Prev; // C - B
+    if (it == Begin())
+    {
+        Pop_Front();
+        return;
+    }
+    if (it == End() || it == Iterator(Tail))
+    {
+        Pop_Back();
+        return;
+    }
+    it.iter->Prev->Next = it.iter->Next; // A -> C
+    it.iter->Next->Prev = it.iter->Prev; // C -> A
     delete it.iter;
 }
 
 template <typename T>
-void Linked_List<T>::Remove(const T &val)
+void Linked_List<T>::Remove(T val)
 {
-    auto iter = Head;
-    while (iter != nullptr)
+    for (auto iter = Begin(); iter != End(); iter++)
     {
         if (*iter == val)
         {
-            auto temp = iter->Next;
-            Erase(iter);
-        }
-        else
-        {
-            iter++;
+            if (iter == Begin())
+            {
+                Pop_Front();
+            }
+            else
+            {
+                auto temp = iter;
+                temp--;
+                Erase(iter);
+                iter = temp;
+            }
         }
     }
 }
 
-#endif // VECTOR_H_INCLUDED
+/// @brief 搜尋 LinkedList 中的資料
+/// @param  特定資料
+/// @return 回傳搜尋到的第一個特定資料迭代器
+template <typename T>
+typename Linked_List<T>::Iterator Find(Linked_List<T> list, const T val)
+{
+    auto current = list.Begin();
+    while (current != list.End())
+    {
+        if (*current == val)
+            break;
+        current++;
+    }
+    return current; // Not found.
+}
+
+#endif // LINKED_LIST_H_INCLUDED
