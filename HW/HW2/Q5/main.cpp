@@ -4,7 +4,7 @@
 
 using namespace std;
 
-string Tornado(int n, int dir, vector<vector<int>> v)
+string Operate(int n, int dir, vector<vector<int>> v)
 {
     vector<vector<int>> dirs{{0, -1}, {-1, 0}, {0, 1}, {1, 0}};
 
@@ -43,7 +43,7 @@ int main()
         }
         vv.push_back(v);
     }
-    auto actual = Tornado(n, dir, vv);
+    auto actual = Operate(n, dir, vv);
     cout << actual << endl;
     return 0;
 }
