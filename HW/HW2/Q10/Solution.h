@@ -13,8 +13,14 @@ class Solution
 public:
     ListNode *reverseList(ListNode *head)
     {
-        auto pre = new ListNode{0, head};
+        ListNode* pre = nullptr;
         auto cur = head;
-        
+        while(cur != nullptr){
+            auto temp = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = temp;
+        }
+        return pre;
     }
 };
