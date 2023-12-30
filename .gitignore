@@ -34,8 +34,8 @@
 .DS_Store
 
 **/output
-*/*.dSYM
-*/main
+*.dSYM
+main
 *.zip
 
 /.vscode
