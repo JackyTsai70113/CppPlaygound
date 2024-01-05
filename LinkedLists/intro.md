@@ -54,3 +54,10 @@ C++ 語法
   - 會創造物件實體，並呼叫建構式
 - `delete 指標;`
 - `指標 = nullptr;`
+
+## 和 vector 的比較
+
+| Time Complexity | Insert by index | Insert by value | Push front  | Push back   |
+| --------------- | --------------- | --------------- | ----------- | ----------- |
+| Vector          | O(n) (good)     | O(n) (good)     | O(n) (bad)  | O(1) (good) |
+| Linked List     | O(n) (bad)      | O(n) (bad)      | O(1) (good) | O(1) (bad)  |
