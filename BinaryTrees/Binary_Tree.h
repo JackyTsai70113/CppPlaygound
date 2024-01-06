@@ -181,7 +181,7 @@ void Binary_Tree<T>::PreOrder(Node<T> *node)
 {
     if (node == nullptr)
         return;
-    cout << node->index << ", ";
+    cout << node->data << ", ";
     if (node->left != nullptr)
     {
         PreOrder(node->left);
@@ -201,7 +201,7 @@ void Binary_Tree<T>::InOrder(Node<T> *node)
     {
         InOrder(node->left);
     }
-    cout << node->index << ", ";
+    cout << node->data << ", ";
     if (node->right != nullptr)
     {
         InOrder(node->right);
@@ -221,7 +221,7 @@ void Binary_Tree<T>::PostOrder(Node<T> *node)
     {
         PostOrder(node->right);
     }
-    cout << node->index << ", ";
+    cout << node->data << ", ";
 }
 
 template <typename T>
@@ -237,7 +237,7 @@ void Binary_Tree<T>::LevelOrder(Node<T> *node)
         {
             Node<T> *n = q.front();
             q.pop();
-            cout << n->index << ", ";
+            cout << n->data << ", ";
             if (n->left != nullptr)
             {
                 q.push(n->left);

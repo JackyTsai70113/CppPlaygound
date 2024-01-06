@@ -6,12 +6,12 @@ void TestTraverse()
 {
     Binary_Tree<int> tree;
     tree.Insert(58, 58);
-    tree.Insert(24, 6);
-    tree.Insert(97, 8);
-    tree.Insert(12, 3);
-    tree.Insert(49, 6);
-    tree.Insert(82, 8);
-    tree.Insert(55, 8);
+    tree.Insert(24, 24);
+    tree.Insert(97, 97);
+    tree.Insert(12, 12);
+    tree.Insert(49, 49);
+    tree.Insert(82, 82);
+    tree.Insert(55, 55);
 
     tree.Print(*tree.root);
     cout << "Pre-Order: ";
@@ -74,10 +74,40 @@ void TestDelete()
     cout << "Predecessor of 82: " << tree.Predecessor(tree.Search(82))->index << endl;
 }
 
+void TestHw6()
+{
+    Binary_Tree<int> tree;
+    tree.Insert(5, 7);
+    tree.Insert(3, 5);
+    tree.Insert(7, 8);
+    tree.Insert(1, 4);
+    tree.Insert(4, 3);
+    tree.Insert(6, 9);
+    tree.Insert(8, 1);
+    tree.Insert(2, 2);
+
+    cout << "Pre-Order: ";
+    tree.PreOrder(tree.root);
+    cout << endl;
+
+    cout << "In-Order: ";
+    tree.InOrder(tree.root);
+    cout << endl;
+
+    cout << "Post-Order: ";
+    tree.PostOrder(tree.root);
+    cout << endl;
+
+    cout << "Level-Order: ";
+    tree.LevelOrder(tree.root);
+    cout << endl;
+}
+
 int main()
 {
-    // TestTraverse();
+    TestTraverse();
     TestDelete();
+    TestHw6();
 
     return 0;
 }
