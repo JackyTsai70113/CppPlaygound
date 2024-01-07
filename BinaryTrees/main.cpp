@@ -77,14 +77,11 @@ void TestDelete()
 void TestHw6()
 {
     Binary_Tree<int> tree;
-    tree.Insert(5, 7);
-    tree.Insert(3, 5);
-    tree.Insert(7, 8);
+    tree.Insert(3, 1);
+    tree.Insert(2, 2);
     tree.Insert(1, 4);
     tree.Insert(4, 3);
-    tree.Insert(6, 9);
-    tree.Insert(8, 1);
-    tree.Insert(2, 2);
+    tree.Insert(5, 7);
 
     cout << "Pre-Order: ";
     tree.PreOrder(tree.root);
@@ -105,8 +102,8 @@ void TestHw6()
 
 int main()
 {
-    TestTraverse();
-    TestDelete();
+    // TestTraverse();
+    // TestDelete();
     TestHw6();
 
     return 0;

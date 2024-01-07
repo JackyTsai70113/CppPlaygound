@@ -76,3 +76,32 @@
   - 有兩個子節點
     - 刪除後，找尋節點來替代
     - 從其右子樹找最小的(Successor) 或是左子樹找最大的(Predecessor)
+
+## 一般樹化為二元樹
+
+- 將兄弟節點們用平行線連結
+- 只保留每個節點中最左邊的連結
+- 右邊的兄弟節點順時針轉 45 度
+
+  ```mermaid
+      flowchart TD
+      %% B connect to H
+      A --> B 
+      %% H connect to C
+      A --> H
+      A --> C
+      %% D connect to E
+      B --> D
+      B --> E
+      %% F connect to G
+      C --> F
+      C --> G
+
+      A' --> B'
+      B' --> D'
+      D' --> E'
+      B' --> H'
+      H' --> C'
+      C' --> F'
+      F' --> G'
+  ```

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <unordered_map>
 #include <vector>
 #include <iostream>
@@ -7,38 +8,50 @@ using namespace std;
 class Solution
 {
 public:
-    bool containsNearbyAlmostDuplicate(vector<int> &nums, int indexDiff, int valueDiff)
+    vector<vector<int>> threeSum(vector<int> &nums)
     {
-        unordered_map<int, int> buckets;
+        sort(nums.begin(), nums.end());
+        if (nums.size() < 3)
+            return {};
+        if (nums[0] > 0)
+            return {};
+        vector<vector<int>> res;
+        unordered_map<int, int> map;
         for (int i = 0; i < nums.size(); i++)
         {
-            int bucket = nums[i] / (valueDiff + 1);
-            if (nums[i] < 0)
-                bucket--;
-            if (buckets.count(bucket))
-                return true;
-            if (buckets.count(bucket - 1) && nums[i] - buckets[bucket - 1] <= valueDiff)
-                return true;
-            if (buckets.count(bucket + 1) && buckets[bucket + 1] - nums[i] <= valueDiff)
-                return true;
-            buckets[bucket] = nums[i];
-            if (buckets.size() > indexDiff)
-            {
-                int key = nums[i - indexDiff] / (valueDiff + 1);
-                if (nums[i - indexDiff] < 0)
-                    key--;
-                buckets.erase(key);
-            }
+            map[nums[i]] = i;
         }
-        return false;
+
+        for (int i = 0; i < nums.size() - 2; i++)
+        {
+            if (nums[i] > 0)
+                break;
+            for (int j = i + 1; j < nums.size() - 1; j++)
+            {
+                int temp = -1 * (nums[i] + nums[j]);
+                if (map.count(temp) && map[temp] > j)
+                {
+                    res.push_back({nums[i], nums[j], temp});
+                }
+                j = map[nums[j]];
+            }
+            i = map[nums[i]];
+        }
+        return res;
     }
 };
 
 int main()
 {
+    vector<int> v{-1, 0, 1, 2, -1, -4};
     Solution solution;
-    vector<int> v1{1, 5, 9, 1, 5, 9};
-    cout << solution.containsNearbyAlmostDuplicate(v1, 2, 3) << endl;
-    vector<int> v2{1, 2, 3, 1};
-    cout << solution.containsNearbyAlmostDuplicate(v2, 3, 0) << endl;
+    auto vv = solution.threeSum(v);
+    for (int i = 0; i < vv.size(); i++)
+    {
+        for (auto it = vv[i].begin(); it != vv[i].end(); it++)
+        {
+            cout << *it << " ";
+        }
+        cout << endl;
+    }
 }
