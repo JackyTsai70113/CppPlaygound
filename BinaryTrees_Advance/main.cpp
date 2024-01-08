@@ -1,3 +1,4 @@
+#include "Huffman_Tree.h"
 #include <iostream>
 
 using namespace std;
@@ -103,7 +104,7 @@ void Heap_Sort(int *data, int len)
     }
 }
 
-int main()
+void Test_Heapify()
 {
     int data[] = {5, 4, 2, 7, 8, 6, 3, 9, 1};
     cout << "Before Heapify...." << endl;
@@ -120,6 +121,43 @@ int main()
     cout << "After Heap Sort...." << endl;
     Heap_Sort(data, 9);
     Print_Array(data, 9);
+}
 
+void Test_Huffman_Tree()
+{
+    Huffman_Tree code;
+    code.Insert('A', 67);
+    code.Insert('B', 152);
+    code.Insert('C', 92);
+    code.Insert('D', 263);
+    code.Insert('E', 128);
+    code.Insert('F', 86);
+    code.Insert('G', 20);
+    code.Insert('H', 36);
+    code.Build_Huffman_Tree();
+    code.Print_Code_Table();
+}
+
+void Test_Huffman_Tree2()
+{
+    string input = "AAAACAABDBAABDCBAADAA";
+    Huffman_Tree huffman;
+    huffman.Input_String(input);
+    cout << "Start to print the frequency table of " << input << endl;
+    huffman.Print_Frequency_Table();
+    huffman.Build_Huffman_Tree();
+    cout << "Print the code table..." << endl;
+    huffman.Print_Code_Table();
+    string encode = huffman.Encode(input);
+    cout << "Print encode of " << input << ":" << encode << endl;
+    cout << "Print decode of " << encode << ":" << endl;
+    cout << huffman.Decode(input) << endl;
+}
+
+int main()
+{
+    // TestHeapify();
+    // Test_Huffman_Tree();
+    Test_Huffman_Tree2();
     return 0;
 }
