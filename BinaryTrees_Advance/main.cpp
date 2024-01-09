@@ -149,14 +149,13 @@ void Test_Huffman_Tree2()
     cout << "Print the code table..." << endl;
     huffman.Print_Code_Table();
     string encode = huffman.Encode(input);
-    cout << "Print encode of " << input << ":" << encode << endl;
-    cout << "Print decode of " << encode << ":" << endl;
-    cout << huffman.Decode(input) << endl;
+    cout << "Print encode of " << input << ": " << encode << endl;
+    cout << "Print decode of " << encode << ": " << huffman.Decode(encode) << endl;
 }
 
 int main()
 {
-    // TestHeapify();
+    // Test_Heapify();
     // Test_Huffman_Tree();
     Test_Huffman_Tree2();
     return 0;
